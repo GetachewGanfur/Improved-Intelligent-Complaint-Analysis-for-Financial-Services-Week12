@@ -3,7 +3,7 @@ Vector Store Utilities for Complaint Analysis RAG System
 
 This module provides utilities for loading and querying the complaint vector store
 created in Task 2. It includes the ComplaintVectorStore class for easy interaction
-with the FAISS index and associated metadata.
+with the FAISS index and associated metadata. 
 """
 
 import os
