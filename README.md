@@ -4,11 +4,11 @@
 
 This project implements a comprehensive RAG (Retrieval-Augmented Generation) system for analyzing financial service complaints. The system provides intelligent query answering based on complaint data through semantic search and AI-powered text generation.
 
-## 🏗️ Architecture
+## 🏗️ Architecture 
 
 The system is built with a modular, object-oriented design:
 
-```
+```plaintext
 src/
 ├── rag_pipeline.py          # Core RAG pipeline implementation
 ├── rag_evaluator.py         # Comprehensive evaluation framework
@@ -25,71 +25,55 @@ notebooks/
 ## 🚀 Features
 
 ### Core RAG Pipeline
-- **Semantic Retrieval**: FAISS-based vector search with sentence transformers
-- **Intelligent Prompting**: Domain-specific prompt engineering for financial complaints
-- **Flexible Generation**: Support for both Hugging Face models and mock generation
-- **Modular Design**: Easy to extend and customize components
+
+*   **Semantic Retrieval**: FAISS-based vector search with sentence transformers
+*   **Intelligent Prompting**: Domain-specific prompt engineering for financial complaints
+*   **Flexible Generation**: Support for both Hugging Face models and mock generation
+*   **Modular Design**: Easy to extend and customize components
 
 ### Evaluation Framework
-- **Comprehensive Assessment**: 10 predefined evaluation questions across difficulty levels
-- **Multi-dimensional Scoring**: Quality, relevance, and completeness metrics (1-5 scale)
-- **Automated Analysis**: Detailed reports with actionable insights
-- **Performance Visualization**: Charts and metrics for system optimization
+
+*   **Comprehensive Assessment**: 10 predefined evaluation questions across difficulty levels
+*   **Multi-dimensional Scoring**: Quality, relevance, and completeness metrics (1-5 scale)
+*   **Automated Analysis**: Detailed reports with actionable insights
+*   **Performance Visualization**: Charts and metrics for system optimization
 
 ### User Interface
-- **Interactive Mode**: Real-time query answering
-- **Command-line Tools**: Scriptable evaluation and testing
-- **Comprehensive Reporting**: Markdown and CSV export capabilities
+
+*   **Interactive Mode**: Real-time query answering
+*   **Command-line Tools**: Scriptable evaluation and testing
+*   **Comprehensive Reporting**: Markdown and CSV export capabilities
 
 ## 📋 Prerequisites
 
-- Python 3.8+
-- Required packages (see `requirements.txt`):
-  - Core: pandas, numpy, matplotlib, seaborn
-  - NLP: sentence-transformers, transformers, torch
-  - Vector DB: faiss-cpu
-  - Utilities: langchain, tqdm
+*   Python 3.8+
+*   Required packages (see `requirements.txt`):
+    *   Core: pandas, numpy, matplotlib, seaborn
+    *   NLP: sentence-transformers, transformers, torch
+    *   Vector DB: faiss-cpu
+    *   Utilities: langchain, tqdm
 
 ## 🛠️ Installation
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd Intelligent-Complaint-Analysis-for-Financial-Services-Week6
-   ```
+**Clone the repository**:
 
-2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+**Install dependencies**:
 
-3. **Verify installation**:
-   ```bash
-   python test_rag_system.py
-   ```
+**Verify installation**:
 
 ## 📖 Usage
 
 ### Quick Start
 
-1. **Run Task 2 notebook first** to create the vector store:
-   ```bash
-   jupyter notebook notebooks/02_text_chunking_embedding_vectorstore.ipynb
-   ```
+**Run Task 2 notebook first** to create the vector store:
 
-2. **Test the RAG system**:
-   ```bash
-   python test_rag_system.py
-   ```
+**Test the RAG system**:
 
-3. **Run Task 3 notebook** for full evaluation:
-   ```bash
-   jupyter notebook notebooks/03_rag_pipeline_evaluation.ipynb
-   ```
+**Run Task 3 notebook** for full evaluation:
 
 ### Interactive Query Mode
 
-```bash
+```plaintext
 # Start interactive session
 python src/main.py --interactive
 
@@ -101,7 +85,7 @@ python src/main.py --interactive
 
 ### Evaluation Mode
 
-```bash
+```plaintext
 # Run full evaluation
 python src/main.py --evaluate
 
@@ -132,62 +116,69 @@ results = evaluator.run_full_evaluation()
 
 ## 🔍 System Components
 
-### 1. RAG Pipeline (`rag_pipeline.py`)
+### 1\. RAG Pipeline (`rag_pipeline.py`)
 
 **Core Classes**:
-- `RAGPipeline`: Main orchestrator
-- `VectorStoreRetriever`: Semantic search implementation
-- `FinancialComplaintPromptEngine`: Domain-specific prompting
-- `MockGenerator`/`HuggingFaceGenerator`: Text generation
+
+*   `RAGPipeline`: Main orchestrator
+*   `VectorStoreRetriever`: Semantic search implementation
+*   `FinancialComplaintPromptEngine`: Domain-specific prompting
+*   `MockGenerator`/`HuggingFaceGenerator`: Text generation
 
 **Key Features**:
-- Configurable retrieval parameters (top-k, similarity thresholds)
-- Intelligent context preparation and truncation
-- Confidence scoring based on retrieval quality
-- Error handling and graceful degradation
 
-### 2. Evaluation Framework (`rag_evaluator.py`)
+*   Configurable retrieval parameters (top-k, similarity thresholds)
+*   Intelligent context preparation and truncation
+*   Confidence scoring based on retrieval quality
+*   Error handling and graceful degradation
+
+### 2\. Evaluation Framework (`rag_evaluator.py`)
 
 **Evaluation Questions**:
-- **Easy**: Basic information retrieval (2 questions)
-- **Medium**: Analysis and pattern recognition (4 questions)
-- **Hard**: Complex correlation and trend analysis (4 questions)
+
+*   **Easy**: Basic information retrieval (2 questions)
+*   **Medium**: Analysis and pattern recognition (4 questions)
+*   **Hard**: Complex correlation and trend analysis (4 questions)
 
 **Scoring Metrics**:
-- **Quality Score**: Overall assessment (1-5)
-- **Relevance Score**: Question-answer alignment (1-5)
-- **Completeness Score**: Answer comprehensiveness (1-5)
-- **Confidence Score**: Retrieval similarity (0-1)
 
-### 3. Vector Store Utilities (`vector_store_utils.py`)
+*   **Quality Score**: Overall assessment (1-5)
+*   **Relevance Score**: Question-answer alignment (1-5)
+*   **Completeness Score**: Answer comprehensiveness (1-5)
+*   **Confidence Score**: Retrieval similarity (0-1)
+
+### 3\. Vector Store Utilities (`vector_store_utils.py`)
 
 **Features**:
-- FAISS index management
-- Metadata preservation and filtering
-- Category-based search capabilities
-- Export and statistics functionality
+
+*   FAISS index management
+*   Metadata preservation and filtering
+*   Category-based search capabilities
+*   Export and statistics functionality
 
 ## 📊 Evaluation Results
 
 The system provides comprehensive evaluation reports including:
 
-- **Performance Metrics**: Average scores across all dimensions
-- **Question Analysis**: Detailed breakdown of each evaluation question
-- **Source Utilization**: Analysis of retrieved document quality
-- **Recommendations**: Actionable insights for improvement
-- **Visualizations**: Performance charts and distributions
+*   **Performance Metrics**: Average scores across all dimensions
+*   **Question Analysis**: Detailed breakdown of each evaluation question
+*   **Source Utilization**: Analysis of retrieved document quality
+*   **Recommendations**: Actionable insights for improvement
+*   **Visualizations**: Performance charts and distributions
 
 ## 🎨 Interactive Chat Interface
 
 ### Features
-- **Real-time Chat**: Interactive question-answer interface
-- **Source Transparency**: Display retrieved text chunks with metadata
-- **Configurable Settings**: Adjustable retrieval parameters
-- **Chat History**: Conversation tracking and management
-- **Responsive Design**: Works on desktop, tablet, and mobile
+
+*   **Real-time Chat**: Interactive question-answer interface
+*   **Source Transparency**: Display retrieved text chunks with metadata
+*   **Configurable Settings**: Adjustable retrieval parameters
+*   **Chat History**: Conversation tracking and management
+*   **Responsive Design**: Works on desktop, tablet, and mobile
 
 ### Launch Methods
-```bash
+
+```plaintext
 # Method 1: Easy launcher (recommended)
 python app.py
 
@@ -199,11 +190,12 @@ python -m streamlit run src/ui_app.py
 ```
 
 ### UI Components
-- **ChatInterface**: Main application class
-- **Question Input**: Text area for user queries
-- **Response Display**: AI-generated answers with metrics
-- **Source Panel**: Expandable source information
-- **Configuration Sidebar**: Settings and example questions
+
+*   **ChatInterface**: Main application class
+*   **Question Input**: Text area for user queries
+*   **Response Display**: AI-generated answers with metrics
+*   **Source Panel**: Expandable source information
+*   **Configuration Sidebar**: Settings and example questions
 
 ## 🔧 Configuration
 
@@ -247,20 +239,23 @@ pipeline = create_simple_pipeline(
 ## 📈 Performance Optimization
 
 ### Current Performance
-- **Processing Time**: Typically 1-3 seconds per query
-- **Retrieval Quality**: High similarity scores for relevant queries
-- **Answer Quality**: Good relevance with room for improvement in completeness
+
+*   **Processing Time**: Typically 1-3 seconds per query
+*   **Retrieval Quality**: High similarity scores for relevant queries
+*   **Answer Quality**: Good relevance with room for improvement in completeness
 
 ### Optimization Opportunities
-1. **Prompt Engineering**: Refine templates for better answer quality
-2. **Retrieval Parameters**: Tune similarity thresholds and chunk sizes
-3. **Model Fine-tuning**: Domain-specific training for financial complaints
-4. **Context Management**: Improve source selection and ranking
+
+1.  **Prompt Engineering**: Refine templates for better answer quality
+2.  **Retrieval Parameters**: Tune similarity thresholds and chunk sizes
+3.  **Model Fine-tuning**: Domain-specific training for financial complaints
+4.  **Context Management**: Improve source selection and ranking
 
 ## 🧪 Testing
 
 ### Automated Tests
-```bash
+
+```plaintext
 # Run basic functionality tests
 python test_rag_system.py
 
@@ -269,64 +264,51 @@ python -c "from src.rag_pipeline import MockGenerator; print('✅ Import success
 ```
 
 ### Manual Testing
-1. **Interactive Mode**: Test real-time queries
-2. **Evaluation Mode**: Assess system performance
-3. **Custom Questions**: Test with domain-specific queries
+
+1.  **Interactive Mode**: Test real-time queries
+2.  **Evaluation Mode**: Assess system performance
+3.  **Custom Questions**: Test with domain-specific queries
 
 ## 📝 Output Files
 
 The system generates several output files:
 
-- **Evaluation Reports**: Markdown format with detailed analysis
-- **Results CSV**: Structured data for further analysis
-- **Visualizations**: Performance charts and metrics
-- **Logs**: Detailed execution logs for debugging
+*   **Evaluation Reports**: Markdown format with detailed analysis
+*   **Results CSV**: Structured data for further analysis
+*   **Visualizations**: Performance charts and metrics
+*   **Logs**: Detailed execution logs for debugging
 
 ## 🤝 Contributing
 
 ### Development Workflow
-1. **Fork** the repository
-2. **Create** a feature branch
-3. **Implement** changes with proper testing
-4. **Submit** a pull request with detailed description
+
+1.  **Fork** the repository
+2.  **Create** a feature branch
+3.  **Implement** changes with proper testing
+4.  **Submit** a pull request with detailed description
 
 ### Code Standards
-- Follow PEP 8 style guidelines
-- Include comprehensive docstrings
-- Add unit tests for new functionality
-- Update documentation as needed
+
+*   Follow PEP 8 style guidelines
+*   Include comprehensive docstrings
+*   Add unit tests for new functionality
+*   Update documentation as needed
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **Import Errors**:
-   ```bash
-   # Ensure src directory is in Python path
-   export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
-   ```
+**Import Errors**:
 
-2. **Vector Store Not Found**:
-   ```bash
-   # Run Task 2 notebook first
-   jupyter notebook notebooks/02_text_chunking_embedding_vectorstore.ipynb
-   ```
+**Vector Store Not Found**:
 
-3. **Memory Issues**:
-   ```bash
-   # Use CPU-only FAISS
-   pip install faiss-cpu
-   ```
+**Memory Issues**:
 
-4. **Model Loading Errors**:
-   ```bash
-   # Use mock generator for testing
-   python src/main.py --interactive
-   ```
+**Model Loading Errors**:
 
 ### Debug Mode
 
-```bash
+```plaintext
 # Enable verbose logging
 python src/main.py --verbose --interactive
 
@@ -337,13 +319,15 @@ python test_rag_system.py
 ## 📚 Additional Resources
 
 ### Documentation
-- [Sentence Transformers](https://www.sbert.net/)
-- [FAISS Documentation](https://github.com/facebookresearch/faiss)
-- [Hugging Face Transformers](https://huggingface.co/docs/transformers/)
+
+*   [Sentence Transformers](https://www.sbert.net/)
+*   [FAISS Documentation](https://github.com/facebookresearch/faiss)
+*   [Hugging Face Transformers](https://huggingface.co/docs/transformers/)
 
 ### Research Papers
-- "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (Lewis et al.)
-- "Dense Passage Retrieval for Open-Domain Question Answering" (Karpukhin et al.)
+
+*   "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (Lewis et al.)
+*   "Dense Passage Retrieval for Open-Domain Question Answering" (Karpukhin et al.)
 
 ## 📄 License
 
@@ -351,11 +335,55 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- Financial complaint data from CFPB
-- Sentence Transformers for semantic embeddings
-- FAISS for efficient similarity search
-- Hugging Face for transformer models
+*   Financial complaint data from CFPB
+*   Sentence Transformers for semantic embeddings
+*   FAISS for efficient similarity search
+*   Hugging Face for transformer models
 
----
+**Note**: This system is designed for educational and research purposes. For production use, ensure proper data privacy and security measures are in place.  
+ 
 
-**Note**: This system is designed for educational and research purposes. For production use, ensure proper data privacy and security measures are in place.
+```plaintext
+# Use mock generator for testing
+python src/main.py --interactive
+```
+
+```plaintext
+# Use CPU-only FAISS
+pip install faiss-cpu
+```
+
+```plaintext
+# Run Task 2 notebook first
+jupyter notebook notebooks/02_text_chunking_embedding_vectorstore.ipynb
+```
+
+```plaintext
+# Ensure src directory is in Python path
+export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+```
+
+```plaintext
+jupyter notebook notebooks/03_rag_pipeline_evaluation.ipynb
+```
+
+```plaintext
+python test_rag_system.py
+```
+
+```plaintext
+jupyter notebook notebooks/02_text_chunking_embedding_vectorstore.ipynb
+```
+
+```plaintext
+python test_rag_system.py
+```
+
+```plaintext
+pip install -r requirements.txt
+```
+
+```plaintext
+git clone <repository-url>
+cd Intelligent-Complaint-Analysis-for-Financial-Services-Week6
+```
