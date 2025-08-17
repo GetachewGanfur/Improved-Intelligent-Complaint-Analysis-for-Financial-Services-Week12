@@ -178,7 +178,7 @@ class RAGEvaluator:
             quality_score = 1
         
         # Adjust completeness based on answer length and detail
-        if len(answer) > 200 and "don't have enough information" not in answer.lower():
+        if len(answer) > 200 and "Don't have enough information" not in answer.lower():
             completeness_score = min(5, completeness_score + 1)
         elif len(answer) < 100:
             completeness_score = max(1, completeness_score - 1)
