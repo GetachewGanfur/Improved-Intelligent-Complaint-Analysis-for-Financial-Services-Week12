@@ -163,7 +163,7 @@ def main():
     show_key_features()
     
     print("\n" + "=" * 60)
-    print("🎉 RAG System Demonstration Complete!")
+    print("🎉 RAG System Demonstration Complete! ")
     print("\nNext Steps:")
     print("1. Install dependencies: pip install -r requirements.txt")
     print("2. Run Task 2 notebook to create vector store")
