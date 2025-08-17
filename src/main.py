@@ -88,7 +88,7 @@ class FinancialComplaintRAGApp:
                     continue
                 
                 # Run RAG pipeline
-                print("\nProcessing your question...")
+                print("\n Processing your question...")
                 response = self.rag_pipeline.run(query)
                 
                 # Display results
