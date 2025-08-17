@@ -3,7 +3,7 @@
 UI System Demonstration for Financial Complaint Analysis RAG System
 
 This script demonstrates the interactive chat interface capabilities
-and provides instructions for launching the Streamlit application.
+and provides instructions for launching the Streamlit application. 
 """
 
 import os
