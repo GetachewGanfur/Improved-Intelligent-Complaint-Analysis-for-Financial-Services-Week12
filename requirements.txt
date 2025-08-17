@@ -1,41 +1,46 @@
-# Core Python Libraries
-pandas
-numpy
+# Core data science libraries
+pandas>=1.5.0
+numpy>=1.21.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+scikit-learn>=1.1.0
 
-# Visualization (for EDA)
-matplotlib
-seaborn
+# Text processing and NLP
+langchain>=0.0.200
+sentence-transformers>=2.2.0
+transformers>=4.20.0
+torch>=1.12.0
 
-# Text Cleaning & Preprocessing
-nltk
-spacy
-beautifulsoup4
-tqdm
+# Vector database and search
+faiss-cpu>=1.7.0
+# faiss-gpu>=1.7.0  # Uncomment if using GPU
 
-# Sentence Embeddings
-sentence-transformers
+# Progress bars and utilities
+tqdm>=4.64.0
 
-# Vector Store (RAG)
-faiss-cpu
-# Optional: chromadb
+# Jupyter notebook support
+jupyter>=1.0.0
+ipykernel>=6.15.0
 
-# RAG Framework / LLM Orchestration
-langchain
-openai
+# Optional: For advanced text processing
+nltk>=3.7
+spacy>=3.4.0
 
-# Hugging Face Transformers (LLMs)
-transformers
-torch
-accelerate
+# Optional: For ChromaDB alternative
+# chromadb>=0.3.0
 
-# Web UI Interface
-streamlit
-streamlit-chat  # Optional - nice chat UI element
+# Optional: For OpenAI integration (Task 3)
+# openai>=0.27.0
 
-# Utility
-python-dotenv
-scikit-learn
-regex
+# Required for Task 3 RAG Pipeline
+transformers>=4.20.0
+torch>=1.12.0
+datasets>=2.0.0
 
-# Jupyter (optional - for dev only)
-jupyterlab
+# Required for Task 4 Interactive UI
+streamlit>=1.28.0
+
+# Development and testing
+pytest>=7.0.0
+black>=22.0.0
+flake8>=5.0.0
