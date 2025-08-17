@@ -6,7 +6,7 @@ for analyzing financial complaints. It includes:
 - Retriever: Semantic search against the vector store
 - Prompt Engineering: Robust templates for LLM guidance
 - Generator: LLM integration for answer generation
-- Pipeline Orchestration: End-to-end RAG workflow
+- Pipeline Orchestration: End-to-end RAG workflow 
 """
 
 import os
