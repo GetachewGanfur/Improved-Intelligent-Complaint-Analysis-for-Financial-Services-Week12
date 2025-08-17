@@ -1,5 +1,5 @@
 """
-Configuration settings for the complaint analysis system
+Configuration settings for the complaint analysis system 
 """
 
 import os
