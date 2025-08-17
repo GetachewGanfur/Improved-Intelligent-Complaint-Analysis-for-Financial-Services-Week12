@@ -11,7 +11,7 @@ sentence-transformers>=2.2.0
 transformers>=4.20.0
 torch>=1.12.0
 
-# Vector database and search
+# Vector database and search 
 faiss-cpu>=1.7.0
 # faiss-gpu>=1.7.0  # Uncomment if using GPU
 
