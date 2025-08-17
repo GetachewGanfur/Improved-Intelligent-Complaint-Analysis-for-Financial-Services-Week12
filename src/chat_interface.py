@@ -6,7 +6,7 @@ for interacting with the RAG system. It includes:
 - ChatSession: Manages conversation state and history
 - ResponseFormatter: Formats responses with sources
 - ChatInterface: Main interface controller
-- StreamingHandler: Handles response streaming (optional)
+- StreamingHandler: Handles response streaming (optional) 
 """
 
 import time
