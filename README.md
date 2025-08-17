@@ -1,4 +1,4 @@
-# Intelligent Complaint Analysis for Financial Services - Week 6
+#Improved Intelligent Complaint Analysis for Financial Services - Week 12
 
 ## Project Overview
 
