@@ -228,7 +228,7 @@ st.set_page_config(
 
 
 def main():
-    """Main entry point for the Streamlit application."""
+    """Main entry point for the Streamlit application. """
     chat_interface = ChatInterface()
     chat_interface.run()
 
