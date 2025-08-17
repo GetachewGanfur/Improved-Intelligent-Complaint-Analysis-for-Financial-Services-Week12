@@ -2,7 +2,7 @@
 System Health Monitor for Financial Complaint Analysis RAG System
 
 This module provides comprehensive system monitoring, health checks,
-and performance diagnostics for the RAG pipeline.
+and performance diagnostics for the RAG pipeline. 
 """
 
 import os
