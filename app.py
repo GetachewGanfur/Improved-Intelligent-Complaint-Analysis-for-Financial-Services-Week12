@@ -54,7 +54,7 @@ def check_system_status():
         'config_file': os.path.exists('config.py')
     }
     
-    print("\n📊 System Status:")
+    print("\n📊 System Status: ")
     print("=" * 40)
     for component, exists in status.items():
         icon = "✅" if exists else "❌"
