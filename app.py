@@ -268,36 +268,25 @@ def main():
         return
     
     elif args.mode == 'test':
-        if not check_system_status():
-            print("❌ System not ready. Run 'python app.py setup' first.")
-            return
         run_tests()
         return
     
     elif args.mode == 'eval':
-        if not check_system_status():
-            print("❌ System not ready. Run 'python app.py setup' first.")
-            return
         run_evaluation()
         return
     
     elif args.mode == 'cli':
-        if not check_system_status():
-            print("❌ System not ready. Run 'python app.py setup' first.")
-            return
         launch_cli()
         return
     
-    elif args.mode == 'web':
+    else:  # Default to 'web' mode
+        # Check system status before launching
         if not check_system_status():
-            print("❌ System not ready. Run 'python app.py setup' first.")
+            print("\n⚠️  System not fully ready. Run 'python app.py setup' first.")
             return
+        
         launch_streamlit()
-        return
-    
-    else:
-        print(f"❌ Unknown mode: {args.mode}")
-        show_system_info()
+
 
 if __name__ == "__main__":
     main()
