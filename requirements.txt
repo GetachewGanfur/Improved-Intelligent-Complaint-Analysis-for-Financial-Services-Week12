@@ -39,10 +39,7 @@ datasets>=2.0.0
 
 # Required for Task 4 Interactive UI
 streamlit>=1.28.0
-<<<<<<< HEAD
 gradio>=3.50.0
-=======
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 
 # Development and testing
 pytest>=7.0.0
