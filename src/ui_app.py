@@ -58,11 +58,19 @@ class ChatInterface:
     
     def render_header(self):
         """Render the application header."""
+<<<<<<< HEAD
         st.set_page_config(
             page_title="Financial Complaint Analysis RAG System",
             page_icon="🏦",
             layout="wide"
         )
+=======
+st.set_page_config(
+            page_title="Financial Complaint Analysis RAG System",
+            page_icon="🏦",
+    layout="wide"
+)
+>>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 
         st.title("🏦 Financial Complaint Analysis RAG System")
         st.markdown("**AI-powered analysis of consumer financial complaints**")
@@ -107,7 +115,11 @@ class ChatInterface:
         
         # Submit and Clear buttons
         col1, col2, col3 = st.columns([1, 1, 1])
+<<<<<<< HEAD
         with col2:
+=======
+    with col2:
+>>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
             submit_button = st.button("🚀 Ask Question", type="primary", use_container_width=True)
         with col3:
             if st.button("🗑️ Clear Chat", use_container_width=True):
@@ -152,7 +164,11 @@ class ChatInterface:
                     
                     self.display_response(response, config, processing_time)
                     
+<<<<<<< HEAD
                 except Exception as e:
+=======
+            except Exception as e:
+>>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
                     st.error(f"❌ Error: {str(e)}")
     
     def display_response(self, response: RAGResponse, config, processing_time: float):
@@ -198,7 +214,11 @@ class ChatInterface:
         if not st.session_state.chat_history:
             return
         
+<<<<<<< HEAD
         st.markdown("---")
+=======
+    st.markdown("---")
+>>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
         st.subheader("📜 Chat History")
         
         for i, entry in enumerate(st.session_state.chat_history):

@@ -3,14 +3,21 @@ __pycache__/
 *.py[codz]
 *$py.class
 data/
+<<<<<<< HEAD
 vector_store/
+=======
+ 
+>>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
 build/
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 develop-eggs/
 dist/
 downloads/
