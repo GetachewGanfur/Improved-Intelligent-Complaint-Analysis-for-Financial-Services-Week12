@@ -14,11 +14,7 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 import pandas as pd
 
-<<<<<<< HEAD
 from rag_pipeline import RAGPipeline, RAGResponse, SearchResult
-=======
-from .rag_pipeline import RAGPipeline, RAGResponse, SearchResult
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -523,11 +519,7 @@ The RAG pipeline shows promise in financial complaint analysis with room for imp
 
 def create_evaluator(vector_store_dir: str = "../vector_store") -> RAGEvaluator:
     """Convenience function to create an evaluator instance."""
-<<<<<<< HEAD
     from rag_pipeline import create_simple_pipeline
-=======
-    from .rag_pipeline import create_simple_pipeline
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
     
     pipeline = create_simple_pipeline(vector_store_dir)
     return RAGEvaluator(pipeline)
