@@ -490,8 +490,13 @@ The RAG pipeline shows promise in financial complaint analysis with room for imp
         logger.info(f"Results exported to {filename}")
     
     def save_evaluation_report(self, results: List[EvaluationResult], 
-                             report_dir: str = "../reports") -> str:
+                             report_dir: str = None) -> str:
         """Save the evaluation report to a file."""
+        
+        if report_dir is None:
+            # Get the correct path to reports directory
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            report_dir = os.path.join(os.path.dirname(current_dir), "reports")
         
         os.makedirs(report_dir, exist_ok=True)
         
@@ -517,9 +522,14 @@ The RAG pipeline shows promise in financial complaint analysis with room for imp
         return report_path
 
 
-def create_evaluator(vector_store_dir: str = "../vector_store") -> RAGEvaluator:
+def create_evaluator(vector_store_dir: str = None) -> RAGEvaluator:
     """Convenience function to create an evaluator instance."""
     from rag_pipeline import create_simple_pipeline
+    
+    if vector_store_dir is None:
+        # Get the correct path to vector store
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        vector_store_dir = os.path.join(os.path.dirname(current_dir), "vector_store")
     
     pipeline = create_simple_pipeline(vector_store_dir)
     return RAGEvaluator(pipeline)
