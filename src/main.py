@@ -30,7 +30,11 @@ logger = logging.getLogger(__name__)
 class FinancialComplaintRAGApp:
     """Main application class for the Financial Complaint RAG system."""
     
-    def __init__(self, vector_store_dir: str = "../vector_store"):
+    def __init__(self, vector_store_dir: str = None):
+        if vector_store_dir is None:
+            # Get the correct path to vector store
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            vector_store_dir = os.path.join(os.path.dirname(current_dir), "vector_store")
         self.vector_store_dir = vector_store_dir
         self.rag_pipeline = None
         self.evaluator = None
@@ -261,8 +265,8 @@ Examples:
     
     parser.add_argument(
         '--vector-store-dir',
-        default='../vector_store',
-        help='Path to vector store directory (default: ../vector_store)'
+        default=None,
+        help='Path to vector store directory (default: auto-detect)'
     )
     
     parser.add_argument(
