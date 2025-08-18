@@ -20,11 +20,7 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 
 # Import our vector store utilities
-<<<<<<< HEAD
 from vector_store_utils import ComplaintVectorStore
-=======
-from src.vector_store_utils import ComplaintVectorStore
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 
 
 # Configure logging
