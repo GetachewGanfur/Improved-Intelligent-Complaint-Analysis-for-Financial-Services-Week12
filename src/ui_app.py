@@ -45,7 +45,10 @@ class ChatInterface:
             return True
             
         try:
-            vector_store_dir = "../vector_store"
+            # Get the correct path to vector store
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            vector_store_dir = os.path.join(os.path.dirname(current_dir), "vector_store")
+            
             if not os.path.exists(vector_store_dir):
                 st.error("❌ Vector store not found! Please run the data preparation notebook first.")
                 return False
