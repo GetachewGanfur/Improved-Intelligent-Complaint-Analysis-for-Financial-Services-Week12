@@ -297,7 +297,11 @@ class ComplaintVectorStore:
         print(f"Results exported to {filename}")
 
 
-def load_vector_store(vector_store_dir: str = '../vector_store') -> ComplaintVectorStore:
+def load_vector_store(vector_store_dir: str = None) -> ComplaintVectorStore:
+    if vector_store_dir is None:
+        # Get the correct path to vector store
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        vector_store_dir = os.path.join(os.path.dirname(current_dir), "vector_store")
     """
     Convenience function to load and return a ComplaintVectorStore instance.
     
@@ -318,7 +322,7 @@ if __name__ == "__main__":
     
     try:
         # Load vector store
-        store = load_vector_store('../vector_store')
+        store = load_vector_store()
         
         # Get statistics
         stats = store.get_stats()
