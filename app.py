@@ -16,6 +16,9 @@ import argparse
 import json
 from pathlib import Path
 
+# Suppress Streamlit ScriptRunContext warning when running outside Streamlit
+os.environ['STREAMLIT_SERVER_HEADLESS'] = 'true'
+
 def check_dependencies():
     """Check and install required dependencies."""
     required_packages = {
