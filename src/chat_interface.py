@@ -16,7 +16,6 @@ from typing import List, Dict, Optional, Tuple, Generator, Any
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
 
-<<<<<<< HEAD
 try:
     import gradio as gr
     GRADIO_AVAILABLE = True
@@ -27,13 +26,6 @@ import pandas as pd
 
 from rag_pipeline import RAGPipeline, RAGResponse, create_simple_pipeline
 from vector_store_utils import ComplaintVectorStore
-=======
-import gradio as gr
-import pandas as pd
-
-from .rag_pipeline import RAGPipeline, RAGResponse, create_simple_pipeline
-from .vector_store_utils import ComplaintVectorStore
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
