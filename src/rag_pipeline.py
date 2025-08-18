@@ -213,26 +213,111 @@ class HuggingFaceGenerator(BaseGenerator):
             return f"Error generating response: {str(e)}"
 
 
-class MockGenerator(BaseGenerator):
-    """Mock generator for testing and development without requiring heavy models."""
-    
-    def __init__(self):
-        self.responses = {
-            "credit card": "Based on the complaint data, I can see several credit card billing issues including unauthorized charges and incorrect interest calculations. The most common problems appear to be related to billing disputes and fee assessments.",
-            "billing": "The complaint data shows multiple billing-related issues across different financial products. Common problems include incorrect charges, late fee assessments, and billing statement errors.",
-            "unauthorized": "Several complaints mention unauthorized transactions and charges. This appears to be a significant concern that requires immediate attention from financial institutions.",
-            "default": "Based on the provided context, I can analyze the customer complaint data to help answer your question. The information shows various financial service issues that customers have experienced."
-        }
+class SimpleContextGenerator(BaseGenerator):
+    """Simple context-based generator that analyzes retrieved content."""
     
     def generate(self, prompt: str) -> str:
-        """Generate a mock response based on prompt content."""
-        prompt_lower = prompt.lower()
+        """Generate response by analyzing the context in the prompt."""
+        try:
+            # Extract context and question from prompt
+            if "CONTEXT:" in prompt and "QUESTION:" in prompt:
+                context_start = prompt.find("CONTEXT:") + len("CONTEXT:")
+                question_start = prompt.find("QUESTION:") + len("QUESTION:")
+                answer_start = prompt.find("ANSWER:")
+                
+                context = prompt[context_start:question_start-len("QUESTION:")].strip()
+                question = prompt[question_start:answer_start-len("ANSWER:")].strip()
+                
+                return self._analyze_context(context, question)
+            else:
+                return "I need properly formatted context to provide a meaningful answer."
+                
+        except Exception as e:
+            return f"I encountered an issue processing your question: {str(e)}"
+    
+    def _analyze_context(self, context: str, question: str) -> str:
+        """Analyze context to generate relevant response."""
+        if not context or "No context available" in context:
+            return "I don't have enough information in the complaint database to answer your question."
         
-        for key, response in self.responses.items():
-            if key in prompt_lower:
-                return response
+        # Extract key information from context
+        sources = context.split("Source ")
+        if len(sources) < 2:
+            return "I couldn't find relevant complaint information to answer your question."
         
-        return self.responses["default"]
+        # Analyze products and issues mentioned
+        products = set()
+        categories = set()
+        issues = set()
+        complaint_texts = []
+        
+        for source in sources[1:]:  # Skip first empty split
+            lines = source.strip().split('\n')
+            for line in lines:
+                if line.startswith('Product:'):
+                    products.add(line.replace('Product:', '').strip())
+                elif line.startswith('Category:'):
+                    categories.add(line.replace('Category:', '').strip())
+                elif line.startswith('Issue:'):
+                    issues.add(line.replace('Issue:', '').strip())
+                elif line.startswith('Text:'):
+                    complaint_texts.append(line.replace('Text:', '').strip())
+        
+        # Generate response based on analysis
+        response_parts = []
+        
+        # Start with direct answer attempt
+        if any(word in question.lower() for word in ['common', 'most', 'frequent', 'typical']):
+            if products:
+                response_parts.append(f"Based on the complaint data, the most relevant issues involve {', '.join(list(products)[:3])}")
+            if categories:
+                response_parts.append(f"The main complaint categories include: {', '.join(list(categories)[:3])}")
+        
+        # Add specific insights from complaint texts
+        key_themes = self._extract_themes(complaint_texts, question)
+        if key_themes:
+            response_parts.append(f"Key issues identified: {', '.join(key_themes)}")
+        
+        # Add context-specific details
+        if 'billing' in question.lower():
+            billing_issues = [text for text in complaint_texts if any(word in text.lower() for word in ['bill', 'charge', 'fee', 'payment'])]
+            if billing_issues:
+                response_parts.append("Common billing-related complaints include issues with incorrect charges, unexpected fees, and payment processing problems.")
+        
+        if 'credit card' in question.lower():
+            cc_issues = [text for text in complaint_texts if 'credit card' in text.lower()]
+            if cc_issues:
+                response_parts.append("Credit card complaints often involve unauthorized transactions, billing disputes, and interest rate issues.")
+        
+        if not response_parts:
+            response_parts.append("Based on the available complaint data, I can see various customer service issues that require attention from financial institutions.")
+        
+        # Add summary
+        response_parts.append(f"This analysis is based on {len([s for s in sources[1:] if s.strip()])} relevant complaint records from the database.")
+        
+        return " ".join(response_parts)
+    
+    def _extract_themes(self, texts: List[str], question: str) -> List[str]:
+        """Extract key themes from complaint texts."""
+        themes = set()
+        
+        # Common financial complaint themes
+        theme_keywords = {
+            'unauthorized charges': ['unauthorized', 'fraud', 'stolen', 'identity'],
+            'billing errors': ['wrong', 'incorrect', 'error', 'mistake', 'bill'],
+            'customer service': ['service', 'representative', 'call', 'help', 'support'],
+            'payment issues': ['payment', 'pay', 'due', 'late', 'process'],
+            'account problems': ['account', 'close', 'open', 'access', 'login'],
+            'fee disputes': ['fee', 'charge', 'cost', 'expensive', 'rate']
+        }
+        
+        for text in texts[:5]:  # Analyze first 5 texts
+            text_lower = text.lower()
+            for theme, keywords in theme_keywords.items():
+                if any(keyword in text_lower for keyword in keywords):
+                    themes.add(theme)
+        
+        return list(themes)[:3]  # Return top 3 themes
 
 
 class RAGPipeline:
@@ -365,7 +450,7 @@ class RAGPipelineFactory:
         prompt_engine = FinancialComplaintPromptEngine()
         
         if use_mock_generator:
-            generator = MockGenerator()
+            generator = SimpleContextGenerator()
         else:
             generator = HuggingFaceGenerator(model_name)
         
@@ -375,10 +460,22 @@ class RAGPipelineFactory:
 
 def create_simple_pipeline(vector_store_dir: str = None) -> RAGPipeline:
     """Convenience function to create a simple RAG pipeline."""
-    return RAGPipelineFactory.create_pipeline(
-        vector_store_dir=vector_store_dir,
-        use_mock_generator=True  # Use mock for simplicity
-    )
+    if vector_store_dir is None:
+        # Get the correct path to vector store
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        vector_store_dir = os.path.join(os.path.dirname(current_dir), "vector_store")
+    
+    # Load vector store
+    vector_store = ComplaintVectorStore(vector_store_dir)
+    vector_store.load()
+    
+    # Create components
+    retriever = VectorStoreRetriever(vector_store)
+    prompt_engine = FinancialComplaintPromptEngine()
+    generator = SimpleContextGenerator()  # Use context-aware generator
+    
+    # Create and return pipeline
+    return RAGPipeline(retriever, prompt_engine, generator)
 
 
 if __name__ == "__main__":
