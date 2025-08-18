@@ -264,6 +264,37 @@ def main():
         if setup_data():
             print("✅ System setup completed successfully!")
         else:
+            print("❌ System setup failed. Please check the logs above.")
+        return
+    
+    elif args.mode == 'test':
+        run_tests()
+        return
+    
+    elif args.mode == 'eval':
+        run_evaluation()
+        return
+    
+    elif args.mode == 'cli':
+        if not check_system_status():
+            print("⚠️  System not ready. Run 'python app.py setup' first.")
+            return
+        launch_cli()
+        return
+    
+    elif args.mode == 'web':
+        if not check_system_status():
+            print("⚠️  System not ready. Run 'python app.py setup' first.")
+            return
+        launch_streamlit()
+        return
+    
+    else:
+        print(f"❌ Unknown mode: {args.mode}")
+        show_system_info()
+
+if __name__ == "__main__":
+    main()
             print("❌ System setup failed. Please check the error messages above.")
         return
     
