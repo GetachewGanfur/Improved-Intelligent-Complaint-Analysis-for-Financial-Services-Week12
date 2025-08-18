@@ -22,7 +22,6 @@ sys.path.append(str(Path(__file__).parent))
 
 try:
     from rag_pipeline import create_simple_pipeline, RAGResponse
-    from chat_interface import ChatInterface, GradioResponseFormatter
     from vector_store_utils import ComplaintVectorStore
 except ImportError as e:
     st.error(f"Error importing RAG components: {e}")
@@ -36,7 +35,6 @@ def initialize_session_state():
             try:
                 vector_store_dir = str(Path(__file__).parent.parent / "vector_store")
                 st.session_state.rag_pipeline = create_simple_pipeline(vector_store_dir)
-                st.session_state.chat_interface = ChatInterface(st.session_state.rag_pipeline)
                 st.success("✅ RAG system initialized successfully!")
             except Exception as e:
                 st.error(f"❌ Failed to initialize RAG system: {e}")
