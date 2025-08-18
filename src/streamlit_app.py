@@ -11,6 +11,11 @@ import time
 import json
 from pathlib import Path
 from typing import List, Dict, Optional
+import warnings
+
+# Suppress Streamlit warnings
+warnings.filterwarnings("ignore", message=".*ScriptRunContext.*")
+st.set_option('client.showErrorDetails', False)
 
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent))
