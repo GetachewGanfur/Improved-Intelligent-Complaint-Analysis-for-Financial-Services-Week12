@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 """
 Vector Store Utilities for Complaint Analysis RAG System
 
@@ -7,7 +5,6 @@ This module provides utilities for loading and querying the complaint vector sto
 created in Task 2. It includes the ComplaintVectorStore class for easy interaction
 with the FAISS index and associated metadata. 
 """
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 
 import os
 import json
@@ -16,21 +13,12 @@ import faiss
 import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
-<<<<<<< HEAD
-from typing import List, Dict
-=======
 from typing import List, Dict, Optional
 
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
 
 class ComplaintVectorStore:
     """
     Utility class for loading and querying the complaint vector store.
-<<<<<<< HEAD
-    """
-
-    def __init__(self, vector_store_dir: str):
-=======
     
     This class provides a convenient interface for:
     - Loading pre-built FAISS index and associated data
@@ -46,42 +34,12 @@ class ComplaintVectorStore:
         Args:
             vector_store_dir: Path to directory containing vector store files
         """
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
         self.vector_store_dir = vector_store_dir
         self.index = None
         self.chunks = None
         self.metadata = None
         self.config = None
         self.embedding_model = None
-<<<<<<< HEAD
-
-    def load(self):
-        """Load all vector store components."""
-        print("Loading vector store components...")
-
-        # Load configuration
-        config_path = os.path.join(self.vector_store_dir, 'config.json')
-        with open(config_path, 'r') as f:
-            self.config = json.load(f)
-
-        # Load FAISS index
-        faiss_path = os.path.join(self.vector_store_dir, 'complaint_index.faiss')
-        self.index = faiss.read_index(faiss_path)
-
-        # Load chunks
-        chunks_path = os.path.join(self.vector_store_dir, 'chunks.pkl')
-        with open(chunks_path, 'rb') as f:
-            self.chunks = pickle.load(f)
-
-        # Load metadata
-        metadata_path = os.path.join(self.vector_store_dir, 'metadata.pkl')
-        with open(metadata_path, 'rb') as f:
-            self.metadata = pickle.load(f)
-
-        # Load embedding model
-        self.embedding_model = SentenceTransformer(self.config['embedding_model'])
-
-=======
         
     def load(self) -> None:
         """
@@ -140,26 +98,10 @@ class ComplaintVectorStore:
         if self.index.ntotal != len(self.chunks):
             raise ValueError("Mismatch between FAISS index size and number of chunks")
         
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
         print(f"Vector store loaded successfully!")
         print(f"- {len(self.chunks)} chunks")
         print(f"- {self.index.ntotal} vectors in index")
         print(f"- Embedding model: {self.config['embedding_model']}")
-<<<<<<< HEAD
-
-    def search(self, query: str, k: int = 5, filter_category: str = None) -> List[Dict]:
-        """Search for similar chunks."""
-        if self.index is None:
-            raise ValueError("Vector store not loaded. Call load() first.")
-
-        # Generate query embedding
-        query_embedding = self.embedding_model.encode([query])
-        faiss.normalize_L2(query_embedding)
-
-        # Search
-        scores, indices = self.index.search(query_embedding.astype(np.float32), k * 2)  # Get more for filtering
-
-=======
     
     def search(self, query: str, k: int = 5, filter_category: Optional[str] = None) -> List[Dict]:
         """
@@ -184,44 +126,10 @@ class ComplaintVectorStore:
         search_k = k * 3 if filter_category else k
         scores, indices = self.index.search(query_embedding.astype(np.float32), search_k)
         
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
         results = []
         for score, idx in zip(scores[0], indices[0]):
             if len(results) >= k:
                 break
-<<<<<<< HEAD
-
-            metadata = self.metadata[idx]
-
-            # Apply category filter if specified
-            if filter_category and metadata['category'] != filter_category:
-                continue
-
-            results.append({
-                'text': self.chunks[idx],
-                'score': float(score),
-                'metadata': metadata
-            })
-
-        return results
-
-    def get_stats(self) -> Dict:
-        """Get vector store statistics."""
-        if self.chunks is None:
-            raise ValueError("Vector store not loaded. Call load() first.")
-
-        # Category distribution
-        categories = [meta['category'] for meta in self.metadata]
-        category_counts = pd.Series(categories).value_counts().to_dict()
-
-        return {
-            'total_chunks': len(self.chunks),
-            'total_complaints': len(set(meta['complaint_id'] for meta in self.metadata)),
-            'category_distribution': category_counts,
-            'avg_chunk_length': np.mean([len(chunk) for chunk in self.chunks]),
-            'config': self.config
-        }
-=======
                 
             # Skip invalid indices
             if idx < 0 or idx >= len(self.chunks):
@@ -302,6 +210,7 @@ class ComplaintVectorStore:
                 'max': np.max(chunk_lengths),
                 'std': np.std(chunk_lengths)
             },
+            'embedding_dim': self.index.d if self.index else 0,
             'config': self.config
         }
     
@@ -429,4 +338,3 @@ if __name__ == "__main__":
         
     except Exception as e:
         print(f"Error testing ComplaintVectorStore: {e}")
->>>>>>> 7675c5a3f708b58b48bafc91957162f7cf87092b
