@@ -347,9 +347,13 @@ class RAGPipelineFactory:
     """Factory class for creating RAG pipeline instances."""
     
     @staticmethod
-    def create_pipeline(vector_store_dir: str = "../vector_store",
+    def create_pipeline(vector_store_dir: str = None,
                        model_name: str = "microsoft/DialoGPT-medium",
                        use_mock_generator: bool = False) -> RAGPipeline:
+        if vector_store_dir is None:
+            # Get the correct path to vector store
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            vector_store_dir = os.path.join(os.path.dirname(current_dir), "vector_store")
         """Create a complete RAG pipeline instance."""
         
         # Load vector store
@@ -369,7 +373,7 @@ class RAGPipelineFactory:
         return RAGPipeline(retriever, prompt_engine, generator)
 
 
-def create_simple_pipeline(vector_store_dir: str = "../vector_store") -> RAGPipeline:
+def create_simple_pipeline(vector_store_dir: str = None) -> RAGPipeline:
     """Convenience function to create a simple RAG pipeline."""
     return RAGPipelineFactory.create_pipeline(
         vector_store_dir=vector_store_dir,
