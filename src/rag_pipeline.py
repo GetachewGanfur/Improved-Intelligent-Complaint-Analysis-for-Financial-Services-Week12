@@ -214,7 +214,7 @@ class HuggingFaceGenerator(BaseGenerator):
 
 
 class SimpleContextGenerator(BaseGenerator):
-    """Simple context-based generator that analyzes retrieved content."""
+    """Enhanced context-based generator that provides comprehensive analysis."""
     
     def generate(self, prompt: str) -> str:
         """Generate response by analyzing the context in the prompt."""
@@ -236,88 +236,233 @@ class SimpleContextGenerator(BaseGenerator):
             return f"I encountered an issue processing your question: {str(e)}"
     
     def _analyze_context(self, context: str, question: str) -> str:
-        """Analyze context to generate relevant response."""
+        """Analyze context to generate comprehensive response."""
         if not context or "No context available" in context:
-            return "I don't have enough information in the complaint database to answer your question."
+            return "I don't have enough information in the complaint database to answer your question. Please try rephrasing your question or asking about specific financial products or issues."
         
         # Extract key information from context
         sources = context.split("Source ")
         if len(sources) < 2:
-            return "I couldn't find relevant complaint information to answer your question."
+            return "I couldn't find relevant complaint information to answer your question. Please try asking about specific financial products like credit cards, mortgages, or checking accounts."
         
-        # Analyze products and issues mentioned
-        products = set()
-        categories = set()
-        issues = set()
+        # Parse structured data from sources
+        parsed_data = self._parse_sources(sources[1:])
+        
+        if not parsed_data:
+            return "I found some complaint data but couldn't extract meaningful information. Please try a more specific question."
+        
+        # Generate comprehensive response based on question type
+        return self._generate_comprehensive_response(question, parsed_data)
+    
+    def _parse_sources(self, sources: List[str]) -> Dict:
+        """Parse source data into structured format."""
+        products = []
+        categories = []
+        issues = []
         complaint_texts = []
+        subcategories = []
         
-        for source in sources[1:]:  # Skip first empty split
+        for source in sources:
             lines = source.strip().split('\n')
+            source_data = {}
+            
             for line in lines:
+                line = line.strip()
                 if line.startswith('Product:'):
-                    products.add(line.replace('Product:', '').strip())
+                    product = line.replace('Product:', '').strip()
+                    products.append(product)
+                    source_data['product'] = product
                 elif line.startswith('Category:'):
-                    categories.add(line.replace('Category:', '').strip())
+                    category = line.replace('Category:', '').strip()
+                    categories.append(category)
+                    source_data['category'] = category
                 elif line.startswith('Issue:'):
-                    issues.add(line.replace('Issue:', '').strip())
+                    issue = line.replace('Issue:', '').strip()
+                    issues.append(issue)
+                    source_data['issue'] = issue
                 elif line.startswith('Text:'):
-                    complaint_texts.append(line.replace('Text:', '').strip())
+                    text = line.replace('Text:', '').strip()
+                    complaint_texts.append(text)
+                    source_data['text'] = text
+            
+            if source_data.get('text'):
+                # Extract subcategories from text analysis
+                subcats = self._extract_subcategories(source_data['text'])
+                subcategories.extend(subcats)
         
-        # Generate response based on analysis
+        return {
+            'products': products,
+            'categories': categories,
+            'issues': issues,
+            'texts': complaint_texts,
+            'subcategories': subcategories,
+            'source_count': len([s for s in sources if s.strip()])
+        }
+    
+    def _extract_subcategories(self, text: str) -> List[str]:
+        """Extract specific issue subcategories from complaint text."""
+        text_lower = text.lower()
+        subcategories = []
+        
+        # Define subcategory patterns
+        patterns = {
+            'unauthorized_transactions': ['unauthorized', 'fraud', 'stolen', 'identity theft', 'not authorized'],
+            'billing_errors': ['wrong amount', 'incorrect charge', 'billing error', 'overcharged', 'double charged'],
+            'payment_processing': ['payment not processed', 'payment failed', 'autopay', 'payment declined'],
+            'customer_service': ['rude', 'unhelpful', 'long wait', 'poor service', 'representative'],
+            'account_closure': ['closed account', 'account closure', 'terminate account'],
+            'fee_disputes': ['unexpected fee', 'hidden fee', 'excessive fee', 'fee waiver'],
+            'credit_reporting': ['credit report', 'credit score', 'credit bureau', 'dispute'],
+            'loan_modification': ['loan modification', 'refinance', 'payment plan', 'hardship'],
+            'debt_collection': ['collection', 'debt collector', 'harassment', 'validation']
+        }
+        
+        for category, keywords in patterns.items():
+            if any(keyword in text_lower for keyword in keywords):
+                subcategories.append(category.replace('_', ' ').title())
+        
+        return subcategories[:2]  # Return top 2 subcategories
+    
+    def _generate_comprehensive_response(self, question: str, data: Dict) -> str:
+        """Generate a comprehensive response based on question type and data."""
+        question_lower = question.lower()
         response_parts = []
         
-        # Start with direct answer attempt
-        if any(word in question.lower() for word in ['common', 'most', 'frequent', 'typical']):
-            if products:
-                response_parts.append(f"Based on the complaint data, the most relevant issues involve {', '.join(list(products)[:3])}")
-            if categories:
-                response_parts.append(f"The main complaint categories include: {', '.join(list(categories)[:3])}")
+        # Determine question type and generate appropriate response
+        if any(word in question_lower for word in ['common', 'most', 'frequent', 'typical', 'main']):
+            response_parts.extend(self._handle_frequency_question(question_lower, data))
         
-        # Add specific insights from complaint texts
-        key_themes = self._extract_themes(complaint_texts, question)
-        if key_themes:
-            response_parts.append(f"Key issues identified: {', '.join(key_themes)}")
+        elif any(word in question_lower for word in ['how', 'what', 'why', 'when', 'where']):
+            response_parts.extend(self._handle_descriptive_question(question_lower, data))
         
-        # Add context-specific details
-        if 'billing' in question.lower():
-            billing_issues = [text for text in complaint_texts if any(word in text.lower() for word in ['bill', 'charge', 'fee', 'payment'])]
-            if billing_issues:
-                response_parts.append("Common billing-related complaints include issues with incorrect charges, unexpected fees, and payment processing problems.")
+        elif any(word in question_lower for word in ['resolve', 'fix', 'solution', 'handle']):
+            response_parts.extend(self._handle_resolution_question(question_lower, data))
         
-        if 'credit card' in question.lower():
-            cc_issues = [text for text in complaint_texts if 'credit card' in text.lower()]
-            if cc_issues:
-                response_parts.append("Credit card complaints often involve unauthorized transactions, billing disputes, and interest rate issues.")
+        else:
+            # General analysis
+            response_parts.extend(self._handle_general_question(question_lower, data))
+        
+        # Add specific product/category insights
+        response_parts.extend(self._add_specific_insights(question_lower, data))
+        
+        # Add data summary
+        response_parts.append(f"\n\nThis analysis is based on {data['source_count']} relevant complaint records from our database.")
         
         if not response_parts:
-            response_parts.append("Based on the available complaint data, I can see various customer service issues that require attention from financial institutions.")
-        
-        # Add summary
-        response_parts.append(f"This analysis is based on {len([s for s in sources[1:] if s.strip()])} relevant complaint records from the database.")
+            return "I found relevant complaint data but couldn't generate a specific answer. Please try asking a more focused question about financial products or specific issues."
         
         return " ".join(response_parts)
     
-    def _extract_themes(self, texts: List[str], question: str) -> List[str]:
-        """Extract key themes from complaint texts."""
-        themes = set()
+    def _handle_frequency_question(self, question: str, data: Dict) -> List[str]:
+        """Handle questions about frequency/commonality."""
+        parts = []
         
-        # Common financial complaint themes
-        theme_keywords = {
-            'unauthorized charges': ['unauthorized', 'fraud', 'stolen', 'identity'],
-            'billing errors': ['wrong', 'incorrect', 'error', 'mistake', 'bill'],
-            'customer service': ['service', 'representative', 'call', 'help', 'support'],
-            'payment issues': ['payment', 'pay', 'due', 'late', 'process'],
-            'account problems': ['account', 'close', 'open', 'access', 'login'],
-            'fee disputes': ['fee', 'charge', 'cost', 'expensive', 'rate']
-        }
+        if data['products']:
+            product_counts = {}
+            for product in data['products']:
+                product_counts[product] = product_counts.get(product, 0) + 1
+            
+            top_products = sorted(product_counts.items(), key=lambda x: x[1], reverse=True)[:3]
+            if top_products:
+                products_str = ", ".join([f"{prod} ({count} complaints)" for prod, count in top_products])
+                parts.append(f"Based on the complaint data, the most frequently mentioned products are: {products_str}.")
         
-        for text in texts[:5]:  # Analyze first 5 texts
-            text_lower = text.lower()
-            for theme, keywords in theme_keywords.items():
-                if any(keyword in text_lower for keyword in keywords):
-                    themes.add(theme)
+        if data['categories']:
+            category_counts = {}
+            for category in data['categories']:
+                category_counts[category] = category_counts.get(category, 0) + 1
+            
+            top_categories = sorted(category_counts.items(), key=lambda x: x[1], reverse=True)[:3]
+            if top_categories:
+                categories_str = ", ".join([f"{cat} ({count} cases)" for cat, count in top_categories])
+                parts.append(f"The most common complaint categories are: {categories_str}.")
         
-        return list(themes)[:3]  # Return top 3 themes
+        if data['subcategories']:
+            unique_subcats = list(set(data['subcategories']))
+            if unique_subcats:
+                parts.append(f"Key issue types identified include: {', '.join(unique_subcats[:4])}.")
+        
+        return parts
+    
+    def _handle_descriptive_question(self, question: str, data: Dict) -> List[str]:
+        """Handle descriptive questions (what, how, why, etc.)."""
+        parts = []
+        
+        # Analyze complaint texts for patterns
+        if data['texts']:
+            # Look for specific patterns based on question keywords
+            if 'billing' in question or 'charge' in question:
+                billing_issues = [text for text in data['texts'] if any(word in text.lower() for word in ['bill', 'charge', 'fee', 'payment'])]
+                if billing_issues:
+                    parts.append("Regarding billing issues, customers commonly report problems with incorrect charges, unexpected fees, and payment processing errors.")
+            
+            if 'credit card' in question:
+                cc_issues = [text for text in data['texts'] if 'credit' in text.lower()]
+                if cc_issues:
+                    parts.append("Credit card complaints typically involve unauthorized transactions, billing disputes, interest rate concerns, and customer service issues.")
+            
+            if 'mortgage' in question or 'loan' in question:
+                loan_issues = [text for text in data['texts'] if any(word in text.lower() for word in ['mortgage', 'loan', 'payment'])]
+                if loan_issues:
+                    parts.append("Mortgage and loan complaints often center around payment processing, modification requests, and communication issues with servicers.")
+        
+        # Add general insights
+        if data['issues']:
+            unique_issues = list(set(data['issues']))
+            if unique_issues:
+                parts.append(f"The main issues reported include: {', '.join(unique_issues[:4])}.")
+        
+        return parts
+    
+    def _handle_resolution_question(self, question: str, data: Dict) -> List[str]:
+        """Handle questions about resolution/solutions."""
+        parts = []
+        
+        parts.append("Based on the complaint patterns, here are common resolution approaches:")
+        
+        if any('billing' in text.lower() for text in data['texts']):
+            parts.append("• For billing issues: Review account statements, contact customer service for charge disputes, and request fee waivers when appropriate.")
+        
+        if any('unauthorized' in text.lower() for text in data['texts']):
+            parts.append("• For unauthorized transactions: Immediately report to the financial institution, file fraud claims, and monitor credit reports.")
+        
+        if any('service' in text.lower() for text in data['texts']):
+            parts.append("• For customer service issues: Escalate to supervisors, document all interactions, and consider filing complaints with regulatory agencies.")
+        
+        parts.append("• General advice: Keep detailed records, know your rights, and don't hesitate to escalate unresolved issues to regulatory bodies like the CFPB.")
+        
+        return parts
+    
+    def _handle_general_question(self, question: str, data: Dict) -> List[str]:
+        """Handle general questions."""
+        parts = []
+        
+        if data['products'] and data['categories']:
+            parts.append(f"The complaint data shows issues across {len(set(data['products']))} different financial products, with {len(set(data['categories']))} main complaint categories.")
+        
+        if data['subcategories']:
+            unique_subcats = list(set(data['subcategories']))
+            parts.append(f"Common issue types include: {', '.join(unique_subcats[:3])}.")
+        
+        return parts
+    
+    def _add_specific_insights(self, question: str, data: Dict) -> List[str]:
+        """Add specific insights based on question keywords."""
+        parts = []
+        
+        # Security-related insights
+        if any(word in question for word in ['security', 'fraud', 'unauthorized', 'stolen']):
+            security_texts = [text for text in data['texts'] if any(word in text.lower() for word in ['fraud', 'unauthorized', 'stolen', 'identity'])]
+            if security_texts:
+                parts.append("Security concerns are prevalent, with customers reporting unauthorized transactions and identity theft attempts.")
+        
+        # Fee-related insights
+        if any(word in question for word in ['fee', 'charge', 'cost']):
+            fee_texts = [text for text in data['texts'] if any(word in text.lower() for word in ['fee', 'charge', 'cost'])]
+            if fee_texts:
+                parts.append("Fee-related complaints often involve unexpected charges, lack of transparency in fee structures, and difficulty obtaining fee waivers.")
+        
+        return parts
 
 
 class RAGPipeline:
