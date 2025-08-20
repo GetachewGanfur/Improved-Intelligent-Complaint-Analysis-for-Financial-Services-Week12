@@ -22,10 +22,13 @@ try:
 except ImportError:
     GRADIO_AVAILABLE = False
     gr = None
-import pandas as pd
-
-from rag_pipeline import RAGPipeline, RAGResponse, create_simple_pipeline
-from vector_store_utils import ComplaintVectorStore
+try:
+    from rag_pipeline import RAGPipeline, RAGResponse, create_simple_pipeline
+except ImportError:
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from rag_pipeline import RAGPipeline, RAGResponse, create_simple_pipeline
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -254,7 +257,6 @@ class ChatInterface:
             logger.error(f"Error processing query: {e}")
             
             # Add error to session
-            self.current_session.add_message("user", query)
             self.current_session.add_message("assistant", error_msg)
             
             updated_history = history + [(query, error_msg)]
@@ -289,7 +291,7 @@ class GradioApp:
     """Main Gradio application wrapper."""
     
     def __init__(self, 
-                 vector_store_dir: str = "../vector_store",
+                 vector_store_dir: Optional[str] = None,
                  enable_streaming: bool = False,
                  share: bool = False):
         self.vector_store_dir = vector_store_dir
@@ -394,8 +396,8 @@ class GradioApp:
                     else:
                         gr.Markdown("Categories loading...")
             
-            # Export modal
-            with gr.Row(visible=False) as export_row:
+            # Export section
+            with gr.Row(visible=True) as export_row:
                 export_output = gr.Textbox(
                     label="Session Export (JSON)",
                     lines=10,
@@ -478,7 +480,7 @@ class GradioApp:
         return self.app.launch(**launch_kwargs)
 
 
-def create_chat_app(vector_store_dir: str = "../vector_store", 
+def create_chat_app(vector_store_dir: Optional[str] = None, 
                    enable_streaming: bool = False,
                    share: bool = False) -> GradioApp:
     """Factory function to create a chat application."""
@@ -495,7 +497,7 @@ if __name__ == "__main__":
     
     try:
         app = create_chat_app(
-            vector_store_dir="../vector_store",
+            vector_store_dir=None,
             enable_streaming=False,
             share=False
         )
