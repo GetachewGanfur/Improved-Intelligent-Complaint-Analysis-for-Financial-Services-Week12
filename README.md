@@ -179,14 +179,11 @@ The system provides comprehensive evaluation reports including:
 ### Launch Methods
 
 ```plaintext
-# Method 1: Easy launcher (recommended)
-python app.py
+# Method 1: Direct Streamlit (recommended)
+streamlit run src/chat.py
 
-# Method 2: Direct Streamlit
-streamlit run src/ui_app.py
-
-# Method 3: Python module
-python -m streamlit run src/ui_app.py
+# Method 2: Python module
+python -m streamlit run src/chat.py
 ```
 
 ### UI Components
@@ -230,9 +227,9 @@ streamlit_config = {
 # Use mock generator for testing
 pipeline = create_simple_pipeline(use_mock_generator=True)
 
-# Use Hugging Face model
+# Use DeepSeek model (default)
 pipeline = create_simple_pipeline(
-    model_name="microsoft/DialoGPT-medium"
+    model_name="deepseek-ai/DeepSeek-V3-0324"
 )
 ```
 
