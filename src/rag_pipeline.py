@@ -15,6 +15,9 @@ import logging
 from typing import List, Dict, Optional, Tuple, Any
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from huggingface_hub import InferenceClient
+from dotenv import load_dotenv
+load_dotenv()
 
 import pandas as pd
 from sentence_transformers import SentenceTransformer
@@ -36,7 +39,7 @@ class RAGConfig:
     max_context_length: int = 2000
     temperature: float = 0.7
     max_tokens: int = 500
-    model_name: str = "microsoft/DialoGPT-medium"  # Default model
+    model_name: str = "deepseek-ai/DeepSeek-V3-0324"  # Default model
 
 
 @dataclass
@@ -171,13 +174,12 @@ class BaseGenerator(ABC):
 class HuggingFaceGenerator(BaseGenerator):
     """Text generator using Hugging Face transformers."""
     
-    def __init__(self, model_name: str = "microsoft/DialoGPT-medium"):
+    def __init__(self, model_name: str = "deepseek-ai/DeepSeek-V3-0324"):
         try:
-            from transformers import pipeline
-            self.generator = pipeline(
-                "text-generation",
-                model=model_name,
-                device=-1  # Use CPU by default
+            
+            self.generator = InferenceClient(
+                model='deepseek-ai/DeepSeek-V3-0324',
+                token=os.getenv("HF_TOKEN")
             )
             self.model_name = model_name
             logger.info(f"Loaded Hugging Face model: {model_name}")
@@ -192,21 +194,21 @@ class HuggingFaceGenerator(BaseGenerator):
         """Generate text based on the prompt."""
         try:
             # Generate response
-            response = self.generator(
-                prompt,
-                max_length=len(prompt.split()) + 100,
-                temperature=0.7,
-                do_sample=True,
-                pad_token_id=self.generator.tokenizer.eos_token_id
+            print(prompt)
+            print('run_')
+
+            response = self.generator.chat_completion(
+                message=prompt,
+                temperature=0.7
             )
-            
+            print('gech')
             # Extract generated text
-            generated_text = response[0]['generated_text']
-            
+            generated_text = response.choices[0].message.strip()
+            print(generated_text)
             # Remove the original prompt
-            answer = generated_text[len(prompt):].strip()
+            # answer = generated_text[len(prompt):].strip()
             
-            return answer if answer else "I apologize, but I couldn't generate a meaningful response."
+            return generated_text if generated_text else "I apologize, but I couldn't generate a meaningful response."
             
         except Exception as e:
             logger.error(f"Error during text generation: {e}")
@@ -578,7 +580,7 @@ class RAGPipelineFactory:
     
     @staticmethod
     def create_pipeline(vector_store_dir: str = None,
-                       model_name: str = "microsoft/DialoGPT-medium",
+                       model_name: str = "deepseek-ai/DeepSeek-V3-0324",
                        use_mock_generator: bool = False) -> RAGPipeline:
         if vector_store_dir is None:
             # Get the correct path to vector store
